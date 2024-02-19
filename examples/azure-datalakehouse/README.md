@@ -1,6 +1,6 @@
 # Azure Data Lakehouse
 
-This module provisions a [Data Lakehouse](https://www.databricks.com/glossary/data-lakehouse) in Azure,
+This module provisions a [Data Lakehouse](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/) in Azure,
 by employing the following Azure resources:
 
 - Datalake as an [Azure Storage Account](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview)
