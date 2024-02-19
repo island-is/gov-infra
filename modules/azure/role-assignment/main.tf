@@ -1,0 +1,15 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: gzur
+# Version: 0.1.0
+# Timestamp: 2023-06-07T15:57:07
+
+resource "azurerm_role_assignment" "this" {
+  description = var.description != "" ? var.description : null
+
+  scope        = var.scope
+  principal_id = var.principal_id
+
+  role_definition_id   = try(var.role_definition_id, null)
+  role_definition_name = try(var.role_name, null)
+}
+
