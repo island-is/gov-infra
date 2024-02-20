@@ -37,6 +37,7 @@ variable "tags" {
   description = <<DESC
     Any tags that should be present on created resources. Will get merged with local.default_tags
   DESC
+  default     = {}
 }
 
 variable "default_tag_override" {
