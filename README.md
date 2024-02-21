@@ -13,6 +13,14 @@ This repository is organized as follows:
 - **[./examples](./examples)** contains examples of coherent infrastructure setups using the modules
   provided in the `./modules` directory.
 
+## Contributing institutions
+This repository is a collaborative effort between public institutions in Iceland. 
+Currently, the contributing institutions are:
+
+- [Ministry of Finance and Economic Affairs (Fjármála- og efnahagsráðuneytið)](https://www.government.is/ministries/ministry-of-finance-and-economic-affairs/)
+- [Financial Management Authority (Fjársýsla ríkisins)](https://island.is/en/o/the-financial-management-authority)
+- [National University Hospital of Iceland (Landspítali)](https://www.landspitali.is/)
+
 ## Background and purpose
 
 In 2021, Iceland introduced its ["Strategic Cloud Policies"](https://island.is/en/o/digital-iceland/Cloud-Policy-Icelandic-Public-Sector) to promote the efficient use of public cloud services across the Icelandic government and public sector. These policies highlight key principles:
