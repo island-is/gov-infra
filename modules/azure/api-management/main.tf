@@ -13,12 +13,13 @@ module "naming_apimanagement" {
   source  = "Azure/naming/azurerm"
   version = "0.2.0"
 
-  prefix = module.defaults.prefix
+  prefix = split("-", module.defaults.prefix)
   suffix = module.defaults.suffix
 }
 
+
 resource "azurerm_api_management" "apim" {
-  name                          = module.naming_apimanagement.api_management.name_unique
+  name                          = var.name_override != null ? var.name_override : module.naming_apimanagement.api_management.name_unique
   location                      = var.resource_group_info.location
   resource_group_name           = var.resource_group_info.name
   publisher_name                = var.publisher_name

@@ -28,7 +28,7 @@ module "warehouse_admin_group" {
 
   existing_group_name = var.warehouse_config.admin_group_name
 
-  group_purpose = "warehouse-admin"
+  group_purpose             = "warehouse-admin"
   group_owner_principal_ids = local.ad_owners
 
   depends_on = [
@@ -45,8 +45,8 @@ module "data_engineer_user_group" {
   tier     = var.tier
   instance = var.instance
 
-  existing_group_name = var.datalakehouse_contributor_group_name
-  group_owner_principal_ids        = local.ad_owners
+  existing_group_name       = var.datalakehouse_contributor_group_name
+  group_owner_principal_ids = local.ad_owners
 
   group_purpose     = "datalake-contributor"
   group_description = <<DESC

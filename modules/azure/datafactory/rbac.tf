@@ -60,7 +60,7 @@ module "datafactory_group" {
   org_code = var.org_code
   tier     = var.tier
 
-  group_purpose    = var.group_config.purpose
-  group_owner_principal_ids = var.group_config.owners
+  group_purpose              = var.group_config.purpose
+  group_owner_principal_ids  = var.group_config.owners
   group_member_principal_ids = [azurerm_data_factory.this.identity[0].principal_id]
 }

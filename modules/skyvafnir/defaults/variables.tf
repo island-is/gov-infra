@@ -68,17 +68,17 @@ variable "prefix" {
   type        = string
   default     = ""
   description = <<DESC
-    Prefix to add to the resource name.
+    Prefix to add to the resource name instead of the `org_code`.
   DESC
 }
 
-variable "production_identifiers" {
-  type        = list(string)
-  default     = ["prod", "prd", "production"]
+variable "include_tier_in_names" {
+  type        = bool
+  default     = true
   description = <<DESC
-    List of identifiers that indicate a production environment.
-    Used to determine whether tier should be omitted from naming.
-    Set to empty list to always include tier in naming.
+    Whether names should include tier.
+    I.e. if `tiered_naming = false` will result in a resource name like `[org_code]-[instance]`
+    while `tiered_naming = true` will result in a resource name like `[org_code]-[instance]-[tier]`
   DESC
 }
 
