@@ -23,8 +23,11 @@ output "resource_name_template_prefixed" {
 }
 
 output "prefix" {
-  description = "The default resource_name prefix - in case you need it."
-  value       = split("-", var.prefix)
+  description = <<DESC
+  The resource_name prefix. This is the org_code unless `var.prefix` is set,
+  in which case it is the value of `var.prefix`.
+  DESC
+  value       = local.prefix
 }
 
 output "suffix" {

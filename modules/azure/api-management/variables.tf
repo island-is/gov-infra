@@ -57,3 +57,9 @@ variable "api_contributor_group_id" {
   type        = string
   description = "The ID of the group that should be given contributor access to the API Management instance"
 }
+
+variable "name_override" {
+  type        = string
+  description = "Override the name of the API Management service. If not provided, the name will be generated."
+  default     = null
+}

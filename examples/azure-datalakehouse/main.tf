@@ -178,6 +178,7 @@ module "api_management" {
   publisher_name           = try(var.api_management_config.publisher_name, null)
   resource_group_info      = module.base_setup.resource_group_info
   api_contributor_group_id = module.data_engineer_user_group[0].group_id
+  name_override            = try(var.name_overrides.api_management, null)
 
   tags = local.tags
 }
