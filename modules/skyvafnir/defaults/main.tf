@@ -17,7 +17,7 @@ locals {
   }
 
   # If the tier is in the list of production tiers, then we don't want to include it in the name
-  naming_tier = contains(var.production_identifiers, var.tier) ? "" : var.tier
+  naming_tier = var.include_tier_in_names ? var.tier : ""
 
   # If random_suffix is true, then we'll generate a random pet name and append it to the end of the name
   optional_random_pet = var.append_random_pet ? random_pet.random_suffix[0].id : ""
