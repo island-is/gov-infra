@@ -125,6 +125,9 @@ module "datafactory" {
     owners  = var.datalakehouse_admins
   }
 
+  alert_on_pipeline_failure     = var.alert_on_pipeline_failure
+  pipeline_failure_alert_emails = var.alert_contact_emails
+
   tags = local.tags
 }
 
@@ -144,8 +147,8 @@ module "datawarehouse" {
   sql_server_name_override            = try(var.name_overrides.sql_server, null)
   keyvault_key_name_override          = try(var.name_overrides.warehouse_audit_keyvault_key, null)
   audit_storage_account_name_override = try(var.name_overrides.warehouse_audit_storage_account, null)
-  monitor_alert_emails                = ["jonorri@skyvafnir.is"]
-  enable_monitor_alerts               = true
+  monitor_alert_emails                = var.alert_contact_emails
+  enable_db_monitor_alerts            = true
 
   datawarehouse_contributor_principal_ids = {
     "Data Engineer Group" = module.data_engineer_user_group[0].group_id

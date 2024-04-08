@@ -24,5 +24,5 @@ output "resource_group_info" {
 
 output "budget_alert_action_group_id" {
   description = "The Action Group ID"
-  value       = local.provision_action_group ? azurerm_monitor_action_group.this[0].id : null
+  value       = local.provision_action_group ? module.cost_alarm_action_group[0].action_group_id : null
 }

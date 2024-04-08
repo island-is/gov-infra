@@ -35,9 +35,9 @@ variable "tags" {
 }
 
 variable "keyvault_ip_whitelist" {
-  description = "List of IP addresses that should be whitelisted to access the Key Vault"
   type        = list(string)
-  default     = ["0.0.0.0/0"]
+  description = "List of IP addresses that should be whitelisted to access the Key Vault"
+  default     = []
 }
 
 variable "keyvault_admin_principal_id" {

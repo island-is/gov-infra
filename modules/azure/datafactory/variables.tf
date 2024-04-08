@@ -136,3 +136,15 @@ variable "name_override" {
   description = "Override the name of the Data Factory. If not provided, the name will be generated."
   default     = null
 }
+
+variable "alert_on_pipeline_failure" {
+  type        = bool
+  description = "If true, an alert will be created to notify when a pipeline fails."
+  default     = true
+}
+
+variable "pipeline_failure_alert_emails" {
+  type        = list(string)
+  description = "A list of email addresses to notify when a pipeline fails."
+  default     = []
+}

@@ -37,3 +37,8 @@ output "db_info" {
   description = "Information about the created database(s)"
   value       = module.database
 }
+
+output "enabled_alerts" {
+    description = "List of enabled alerts"
+    value       = keys(local.enabled_alerts)
+}

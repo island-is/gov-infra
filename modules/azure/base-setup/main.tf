@@ -1,22 +1,9 @@
 locals {
   resource_abbreviation  = "rg"
-  resource_name_template = module.defaults.resource_name_template
-  resource_group_name    = module.defaults.resource_name
 }
 
 resource "time_offset" "now" {
   offset_seconds = 1
-}
-
-data "external" "git_sha" {
-  # We tag our resource groups with the git sha of the provisioning commit.
-  program = [
-    "git",
-    "log",
-    "--pretty=format:{ \"git_sha\": \"%H\" }",
-    "-1",
-    "HEAD"
-  ]
 }
 
 # Unify resource group access patterns, since sometimes we are creating the resource group and sometimes we are not.
@@ -33,26 +20,34 @@ locals {
 
 resource "azurerm_resource_group" "this" {
   count    = local.provision_resource_group ? 1 : 0
-  name     = local.resource_group_name
+  name     = module.defaults.resource_name
   location = var.location
 
-  tags = merge(local.tags, data.external.git_sha.result)
+  tags = module.defaults.tags
 }
 
-resource "azurerm_monitor_action_group" "this" {
+module "cost_alarm_action_group" {
   count = local.provision_action_group ? 1 : 0
 
-  name                = format(local.resource_name_template, "ag")
-  short_name          = substr(format(local.resource_name_template, "ag"), 0, 12)
-  resource_group_name = local.resource_group_info.name
+  source = "../monitor-action-group"
 
-  tags = local.tags
+  tier     = var.tier
+  instance = var.instance
+  org_code = var.org_code
+
+  resource_group_info = local.resource_group_info
+
+  group_purpose   = "cost-alert"
+  short_name      = "cost"
+  email_receivers = var.budget_contact_emails
+
+  tags = module.defaults.tags
 }
 
 resource "azurerm_consumption_budget_resource_group" "this" {
   count = local.provision_resource_group && var.budget_for_resource_group > 0.0 ? 1 : 0
 
-  name              = format(local.resource_name_template, "budget")
+  name              = format(module.defaults.resource_name_template, "budget")
   resource_group_id = local.resource_group_info.id
 
   amount     = var.budget_for_resource_group
