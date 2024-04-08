@@ -107,7 +107,6 @@ locals {
       severity          = local.severity.Warning
     }
   }
-  #  alerts = var.enable_db_monitor_alerts ? local.default_monitor_alerts : {}
   # Filter out alerts that are not enabled
   enabled_alerts = var.enable_db_monitor_alerts ? {
     for k, v in local.default_monitor_alerts : k => v if !contains(var.disabled_monitor_alerts, k)
@@ -129,7 +128,6 @@ module "db_alerts" {
   scopes               = [var.resource_group_info.id]
   window_size          = try(each.value.window_size, null)
   frequency            = try(each.value.frequency, null)
-
 
   action = {
     action_group_id    = module.action_group[0].action_group_id

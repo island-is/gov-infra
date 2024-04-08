@@ -51,7 +51,6 @@ variable "short_name" {
   validation {
     condition     = length(var.short_name) <= 9
     error_message = "Short name must not exceed 9 characters."
-
   }
 }
 
