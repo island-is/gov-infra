@@ -5,7 +5,7 @@
 ## Inputs
 
 | Name                                                                                             | Description                                                                                                                                                                                                                                                         | Type                                                                                        | Default      | Required |
-|--------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|--------------|:--------:|
+| ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------ | :------: |
 | <a name="input_budget_contact_emails"></a> [budget_contact_emails](#input_budget_contact_emails) | Emails to notify when the budget is forecasted to be broken                                                                                                                                                                                                         | `list(string)`                                                                              | n/a          |   yes    |
 | <a name="input_databricks_users"></a> [databricks_users](#input_databricks_users)                | List of users to add to the databricks workspace                                                                                                                                                                                                                    | <pre>list(object({<br>    user_name    = string<br>    display_name = string<br>  }))</pre> | n/a          |   yes    |
 | <a name="input_instance"></a> [instance](#input_instance)                                        | Identifier for the application, workload or service                                                                                                                                                                                                                 | `string`                                                                                    | n/a          |   yes    |
@@ -17,13 +17,13 @@
 ## Outputs
 
 | Name                                                                                                        | Description                         |
-|-------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------- |
 | <a name="output_databricks_workspace_url"></a> [databricks_workspace_url](#output_databricks_workspace_url) | The URL of the Databricks workspace |
 
 ## Modules
 
 | Name                                                                                            | Source                                  | Version |
-|-------------------------------------------------------------------------------------------------|-----------------------------------------|---------|
+| ----------------------------------------------------------------------------------------------- | --------------------------------------- | ------- |
 | <a name="module_base_setup"></a> [base_setup](#module_base_setup)                               | ../../modules/azure/base-setup          | n/a     |
 | <a name="module_databricks_config"></a> [databricks_config](#module_databricks_config)          | ../../modules/databricks/initial_config | n/a     |
 | <a name="module_databricks_workspace"></a> [databricks_workspace](#module_databricks_workspace) | ../../modules/azure/databricks          | n/a     |
@@ -32,7 +32,7 @@
 ## Requirements
 
 | Name                                                                     | Version |
-|--------------------------------------------------------------------------|---------|
+| ------------------------------------------------------------------------ | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement_terraform) | >= 1.1  |
 
 <!-- /TERRAFORM_DOCS_BLOCK -->

@@ -70,11 +70,12 @@ variable "contributor_principal_ids" {
   default     = []
 }
 
-variable "auto_pause_delay" {
+variable "auto_pause_delay_minutes" {
   type        = number
   description = <<DESC
   The number of minutes of idle time before the database is automatically paused. The minimum is 60 minutes and the maximum is 10080 minutes (7 days).
   If not specified, the database is never paused.
+  This setting is only available for Serverless SKU's.
   DESC
   default     = null
 }

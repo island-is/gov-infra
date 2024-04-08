@@ -94,3 +94,67 @@ resource "azurerm_data_factory_linked_service_data_lake_storage_gen2" "this" {
   url                  = data.azurerm_storage_account.datalake.primary_dfs_endpoint
   use_managed_identity = true
 }
+
+module "pipeline_failure_action_group" {
+  source = "../monitor-action-group"
+  count  = var.alert_on_pipeline_failure == true ? 1 : 0
+
+  tier     = var.tier
+  instance = var.instance
+  org_code = var.org_code
+
+  resource_group_info = var.resource_group_info
+
+  group_purpose   = "pipeline-alert"
+  short_name      = "pipefail"
+  email_receivers = var.pipeline_failure_alert_emails
+  arm_receiver_role_ids = {
+    "Monitoring Reader" = "43d0d8ad-25c7-4714-9337-8ba259a9fe05"
+  }
+
+  tags = module.defaults.tags
+
+}
+
+resource "azurerm_monitor_metric_alert" "this" {
+  count       = var.alert_on_pipeline_failure == true ? 1 : 0
+  name        = format(module.defaults.resource_name_template, "pipeline_fail_alert")
+  description = <<DESC
+  This alert is triggered when a pipeline fails inside for ${azurerm_data_factory.this.name}
+  ${azurerm_data_factory.this.id}
+  DESC
+
+  resource_group_name      = var.resource_group_info.name
+  target_resource_type     = "Microsoft.DataFactory/factories"
+  target_resource_location = var.resource_group_info.location
+  scopes                   = [azurerm_data_factory.this.id]
+
+  severity    = 2
+  window_size = "PT5M"
+
+  criteria {
+    aggregation      = "Total"
+    metric_name      = "PipelineFailedRuns"
+    metric_namespace = "Microsoft.DataFactory/factories"
+    operator         = "GreaterThan"
+    threshold        = 0
+
+    dimension {
+      name     = "Name"
+      operator = "Include"
+      values   = ["*"]
+    }
+  }
+
+  action {
+    action_group_id = module.pipeline_failure_action_group[0].action_group_id
+  }
+
+  tags = module.defaults.tags
+  lifecycle {
+    precondition {
+      condition     = var.alert_on_pipeline_failure == true && length(var.pipeline_failure_alert_emails) > 0
+      error_message = "var.pipeline_failure_alert_emails can't be empty if var.alert_on_pipeline_failure is true."
+    }
+  }
+}

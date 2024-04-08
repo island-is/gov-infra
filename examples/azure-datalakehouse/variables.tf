@@ -189,3 +189,14 @@ variable "name_overrides" {
   DESC
   default     = {}
 }
+
+variable "alert_on_pipeline_failure" {
+  type        = bool
+  description = "Whether to alert on pipeline failure"
+  default     = false
+}
+variable "alert_contact_emails" {
+  type        = list(string)
+  description = "A list of emails to send alerts to on pipeline failure"
+  default     = []
+}

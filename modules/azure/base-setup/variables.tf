@@ -42,7 +42,9 @@ variable "location" {
 
 variable "budget_for_resource_group" {
   type        = number
-  description = "Budget for the whole resource group"
+  description = <<DESC
+  Budget for the whole resource group. The currency is determined by the subscription's billing currency.
+  DESC
   default     = 0
 }
 

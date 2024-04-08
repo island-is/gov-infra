@@ -18,7 +18,7 @@ resource "azurerm_mssql_database" "this" {
   storage_account_type = var.zone_redundant ? "Geo" : "Local"
   tags                 = local.tags
 
-  auto_pause_delay_in_minutes = var.auto_pause_delay
+  auto_pause_delay_in_minutes = var.auto_pause_delay_minutes
 
   depends_on = [var.server_id]
 }

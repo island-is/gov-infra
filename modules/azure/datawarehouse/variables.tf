@@ -94,7 +94,8 @@ variable "databases" {
   - name_override: Override the name of the database. If not set, the name will be generated according to the following pattern:
                    <org_code>-<resource-abbreviation>-<name>-<tier>
   - contributor_principal_ids: The Principal ID of an existing AD Principal (User, Group, Service Principal etc.) that should be granted contributor access to the database in question.
-
+  - auto_pause_delay_minutes: The number of minutes of inactivity before the database is automatically paused. A value of -1 indicates that the database will never be paused.
+                              NOTE: This can only be supplied for "Serverless" databases.
   Example:
   ```
      "db_name" = {
@@ -115,6 +116,7 @@ variable "databases" {
       zone_redundant            = optional(bool, false)
       name_override             = optional(string, null)
       contributor_principal_ids = optional(list(string), [])
+      auto_pause_delay_minutes  = optional(number, null)
     })
   )
   default = {}
@@ -146,15 +148,39 @@ variable "audit_storage_account_name_override" {
   default     = null
 }
 
-variable "enable_monitor_alerts" {
+variable "enable_db_monitor_alerts" {
   type        = bool
-  description = "Create metric alert rules for the databases in the datawarehouse."
-  default     = true
+  description = <<DESC
+  Create metric alert rules for the databases in the datawarehouse.
+  Currently supported alerts are:
+  high_user_cpu_usage              = "Alerts when the average CPU usage by the user code exceeds 90%."
+  high_total_cpu_usage             = "Triggers an alert when the average total CPU usage of the SQL instance exceeds 90%."
+  high_worker_usage                = "Activates when the minimum percentage of SQL workers in use is greater than 60%."
+  high_data_io_usage               = "Alerts if the average physical data read percentage goes above 90%."
+  storage_percent                  = "Issues an alert when the minimum storage usage exceeds 95%."
+  low_tempdb_log_space             = "Raises an alert when the minimum percentage of used tempdb log space is greater than 60%."
+  failed_connections_system_errors = "Alerts on more than 10 failed connections due to system errors."
+  deadlocks                        = "Monitors and alerts on deadlock occurrences in the database."
+  failed_connections_user_errors   = "Alerts on failed connections due to user errors, if they exceed a threshold."
+  anomalous_connection_rate        = "Alerts on unusual rates of successful connections, indicating potential anomalies."
+  DESC
+  default     = false
 }
 
 variable "monitor_alert_emails" {
   type        = list(string)
   description = "Email addresses to send Azure Monitor alerts to."
+  default     = []
+}
+
+variable "disabled_monitor_alerts" {
+  type        = list(string)
+  description = <<DESC
+  A list of Azure Monitor Alert rules that should be disabled.
+
+  EXAMPLE: To disable the `high_user_cpu_usage` and `high_total_cpu_usage` alerts, set this variable as follows:
+  `disabled_monitor_alerts = ["high_user_cpu_usage", "high_total_cpu_usage"]`
+  DESC
   default     = []
 }
 
@@ -174,3 +200,4 @@ variable "allow_access_from_azure_services" {
   DESC
   default     = false
 }
+
