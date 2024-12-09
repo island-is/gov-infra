@@ -246,7 +246,7 @@ module "keyvault" {
     "App Service" : module.app_service.app_service_identity_principal_id
   }
 
-  keyvault_secret_contributors = {} # KRAPP local.service_contributor_principal_ids_map
+  keyvault_secret_contributors = {}
 
   keyvault_admin_principal_ids = var.keyvault_admin_principal_ids
 
