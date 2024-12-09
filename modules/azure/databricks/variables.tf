@@ -1,9 +1,6 @@
 # Module scaffolded via skyvafnir-module-template by
 # Author: Skyvafnir
 
-#
-
-
 variable "org_code" {
   description = "Org code"
   type        = string

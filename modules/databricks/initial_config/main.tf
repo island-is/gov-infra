@@ -1,9 +1,6 @@
 # Module scaffolded via skyvafnir-module-template by
 # Author: Skyvafnir
 
-#
-
-
 locals {
   resource_abbreviation = "dbc"
 }

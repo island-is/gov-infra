@@ -1,9 +1,6 @@
 # Module scaffolded via skyvafnir-module-template by
 # Author: Skyvafnir
 
-#
-
-
 module "base_setup" {
   source = "../../modules/azure/base-setup"
 

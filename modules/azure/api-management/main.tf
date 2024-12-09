@@ -1,9 +1,6 @@
 # Module scaffolded via skyvafnir-module-template by
 # Author: Skyvafnir
 
-#
-
-
 locals {
   # Change this to match your resource.
   # https://github.com/MicrosoftDocs/cloud-adoption-framework/blob/main/docs/ready/azure-best-practices/resource-abbreviations.md

@@ -1,9 +1,6 @@
 # Module scaffolded via skyvafnir-module-template by
 # Author: Skyvafnir
 
-#
-
-
 output "app_service_identity_principal_id" {
   description = "The principal ID of the identity associated with the App Service"
   value       = length(azurerm_linux_web_app.this.identity) > 0 ? azurerm_linux_web_app.this.identity[0].principal_id : 0
