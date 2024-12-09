@@ -1,7 +1,8 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorrikristjansson
-# Version: 0.1.0
-# Timestamp: 2024-01-17T13:33:48
+# Author: Skyvafnir
+
+#
+
 
 locals {
   resource_abbreviation = "app"
@@ -29,7 +30,7 @@ resource "azurerm_application_insights" "this" {
   retention_in_days                     = 90
   sampling_percentage                   = 0
 
-  tags = var.tags
+  tags = local.tags
 }
 
 resource "azurerm_log_analytics_workspace" "this" {
@@ -37,6 +38,24 @@ resource "azurerm_log_analytics_workspace" "this" {
 
   resource_group_name = var.resource_group_info.name
   location            = var.resource_group_info.location
+
+  tags = local.tags
+}
+
+resource "azurerm_app_service_environment_v3" "this" {
+  count = var.app_service_environment_enabled ? 1 : 0
+
+  name                         = format(module.defaults.resource_name_template, "ase")
+  resource_group_name          = var.resource_group_info.name
+  subnet_id                    = var.subnet_id
+  internal_load_balancing_mode = "None"
+
+  cluster_setting {
+    name  = "DisableTls1.0"
+    value = "1"
+  }
+
+  tags = local.tags
 }
 
 resource "azurerm_linux_web_app" "this" {
@@ -45,68 +64,84 @@ resource "azurerm_linux_web_app" "this" {
   resource_group_name = var.resource_group_info.name
   location            = var.resource_group_info.location
 
-  virtual_network_subnet_id     = var.subnet_id
   client_affinity_enabled       = false
   client_certificate_enabled    = false
   client_certificate_mode       = "Required"
-  enabled                       = true
+  enabled                       = var.enabled
+  public_network_access_enabled = var.public_network_access_enabled
+  service_plan_id               = var.existing_service_plan_id != "" ? var.existing_service_plan_id : azurerm_service_plan.this[0].id
   https_only                    = true
-  public_network_access_enabled = true
-  service_plan_id               = azurerm_service_plan.this.id
 
   app_settings = local.app_settings
+
+  dynamic "connection_string" {
+    for_each = var.connection_strings
+    content {
+      name  = connection_string.key
+      type  = "SQLAzure" # KRAPP Fix this hardcoding
+      value = connection_string.value
+    }
+  }
 
   identity {
     type = "SystemAssigned"
   }
 
   site_config {
-    always_on                               = false
-    container_registry_use_managed_identity = false
-    default_documents = [
-      "Default.htm",
-      "Default.html",
-      "Default.asp",
-      "index.htm",
-      "index.html",
-      "iisstart.htm",
-      "default.aspx",
-      "index.php",
-      "hostingstart.html",
-    ]
-    ftps_state                  = "FtpsOnly"
-    http2_enabled               = false
-    load_balancing_mode         = "LeastRequests"
-    local_mysql_enabled         = false
-    managed_pipeline_mode       = "Integrated"
-    minimum_tls_version         = "1.2"
-    remote_debugging_enabled    = false
-    remote_debugging_version    = "VS2019"
-    scm_minimum_tls_version     = "1.2"
-    scm_use_main_ip_restriction = false
-    use_32_bit_worker           = true
-    vnet_route_all_enabled      = true
-    websockets_enabled          = false
-    worker_count                = 1
+    always_on                         = true
+    ftps_state                        = "Disabled"
+    health_check_path                 = var.enable_health_check ? var.health_check_path : null
+    health_check_eviction_time_in_min = var.enable_health_check ? var.health_check_eviction_time_in_min : null
+
+    dynamic "ip_restriction" {
+      for_each = var.ip_restrictions
+
+      content {
+        action     = ip_restriction.value.action
+        ip_address = ip_restriction.value.ip_address_cidr
+        priority   = ip_restriction.value.priority
+        name       = ip_restriction.value.name
+      }
+    }
 
     application_stack {
       dotnet_version = var.dotnet_version
     }
   }
 
-  tags = var.tags
+  tags = local.tags
+
+  lifecycle {
+    ignore_changes = [app_settings, connection_string]
+  }
+}
+
+locals {
+  contributor_principal_ids_map = { for idx, id in var.contributor_principal_ids : idx => id }
+}
+
+resource "azurerm_role_assignment" "this" {
+  for_each = local.contributor_principal_ids_map
+
+  scope                = azurerm_linux_web_app.this.id
+  role_definition_name = "Contributor"
+  principal_id         = each.value
 }
 
 resource "azurerm_service_plan" "this" {
-  name                = "${var.org_code}-${var.instance}-${var.tier}-appsp"
+  count = var.existing_service_plan_id != "" ? 0 : 1
+
+  name = var.app_service_plan_name_override == "" ? format(module.defaults.resource_name_template, "appsp") : var.app_service_plan_name_override
+
   resource_group_name = var.resource_group_info.name
   location            = var.resource_group_info.location
 
-  os_type                  = "Linux"
-  per_site_scaling_enabled = false
-  sku_name                 = "B1"
-  worker_count             = 1
-  zone_balancing_enabled   = false
+  app_service_environment_id = var.app_service_environment_enabled ? azurerm_app_service_environment_v3.this[0].id : null
+  os_type                    = var.os_type
+  per_site_scaling_enabled   = false
+  sku_name                   = var.sku_name
+  worker_count               = var.worker_count
+  zone_balancing_enabled     = false
 
-  tags = var.tags
+  tags = local.tags
 }

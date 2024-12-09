@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: gzur
-# Version: 0.1.0
-# Timestamp: 2023-11-20T14:55:55
+# Author: Skyvafnir
 
 resource "mssql_script" "this" {
   database_id = var.mssql_db_info.id

@@ -1,14 +1,11 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: gzur
-# Version: 0.1.0
-# Timestamp: 2023-05-10T13:42:35
+# Author: Skyvafnir
 
 variable "resource_abbreviation" {
   type        = string
   description = <<DESC
     The abbreviation for the resource.  This is used to generate the resource name.
   DESC
-  default     = "YOU SHOULD REALLY SET THIS VARIABLE IF YOU EVER SEE THIS IN A PLAN. I'M NOT KIDDING. IT'S IMPORTANT. REALLY. SET IT. NOW. PLEASE. THANKS. I'LL WAIT. NO, REALLY. I'LL WAIT. I'VE GOT ALL DAY. I'M NOT GOING ANYWHERE. I'LL JUST SIT HERE AND WAIT"
 }
 
 variable "org_code" {

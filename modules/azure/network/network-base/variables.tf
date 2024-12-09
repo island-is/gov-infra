@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 variable "org_code" {
   description = "Org code"
   type        = string
@@ -56,10 +58,16 @@ variable "service_endpoints" {
   default     = []
 }
 
-variable "create_delegation" {
-  description = "Create a delegation for the subnet"
-  type        = bool
-  default     = false
+variable "delegations" {
+  description = "A list of delegations to create for the subnet"
+  type = list(object({
+    name = string
+    service_delegation = object({
+      name    = string
+      actions = list(string)
+    })
+  }))
+  default = []
 }
 
 variable "public_ip_name_override" {
@@ -71,5 +79,46 @@ variable "public_ip_name_override" {
 variable "vnet_name_override" {
   description = "The name override of the virtual network"
   type        = string
-  default     = ""
+  default     = null
+}
+
+variable "subnet_name_override" {
+  description = "The name override of the subnet"
+  type        = string
+  default     = null
+}
+
+variable "security_group_rules" {
+  description = <<DESC
+  A map of security group rules to create. The key is the name of the rule.
+  Example:
+  security_group_rules = {
+    "Allow-All-Inbound" : {
+      description = "Allow all inbound traffic"
+      access = "Allow"
+      direction = "Inbound"
+      priority = 100
+      protocol = "Tcp"
+      source_port_range = "*"
+      destination_port_range = "*"
+      source_address_prefix = "*" | "AzureDevOps"
+      destination_address_prefix = "*"
+    }
+  }
+  DESC
+
+  type = map(object({
+    protocol  = string
+    priority  = number
+    direction = string
+    access    = string
+
+    description                  = optional(string)
+    source_port_range            = optional(string)
+    destination_port_range       = optional(string)
+    source_address_prefix        = optional(string)
+    source_address_prefixes      = optional(list(string))
+    destination_address_prefix   = optional(string)
+    destination_address_prefixes = optional(list(string))
+  }))
 }

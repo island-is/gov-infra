@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 data "azurerm_client_config" "current" {}
 
 locals {
@@ -15,23 +17,6 @@ locals {
   data_factory_enabled   = coalesce(var.features.data_factory, true)
   datalake_enabled       = coalesce(var.features.datalake, true)
   keyvault_enabled       = coalesce(var.features.keyvault, true)
-}
-
-data "azurerm_subscription" "workload_subscription" {
-  # This is the workload subscription. It needs to be created by hand.
-  subscription_id = var.platform_config.workload_subscription_id
-}
-
-data "azurerm_management_group" "workload_mgtm_group" {
-  # This is the workload management group, created by the azure-landing-zone infrastructure module.
-  count = var.platform_config.workload_management_group_name != "" ? 1 : 0
-  name  = var.platform_config.workload_management_group_name
-}
-
-resource "azurerm_management_group_subscription_association" "workload_subscription_association" {
-  count               = var.platform_config.workload_management_group_name != "" ? 1 : 0
-  management_group_id = data.azurerm_management_group.workload_mgtm_group[0].id
-  subscription_id     = data.azurerm_subscription.workload_subscription.id
 }
 
 module "base_setup" {
@@ -59,7 +44,6 @@ module "keyvault" {
 
   resource_group_info = module.base_setup.resource_group_info
 
-  keyvault_admin_principal_id  = data.azurerm_client_config.current.object_id
   keyvault_admin_principal_ids = var.datalakehouse_admins
   keyvault_ip_whitelist        = var.keyvault_ip_whitelist
   keyvault_name_override       = try(var.name_overrides.keyvault, null)
@@ -87,7 +71,6 @@ module "datalake" {
 
   resource_group_info = module.base_setup.resource_group_info
 
-
   key_vault_id                  = module.keyvault[0].key_vault_id
   datalake_ip_whitelist         = var.datalake_whitelisted_cidrs
   provision_fileshare           = false
@@ -101,6 +84,14 @@ module "datalake" {
 
   tags = local.tags
 }
+
+locals {
+  default_data_factory_group_config = var.create_adf_group ? {
+    purpose = "datafactory"
+    owners  = var.datalakehouse_admins
+  } : null
+}
+
 
 module "datafactory" {
   count  = local.data_factory_enabled ? 1 : 0
@@ -120,10 +111,7 @@ module "datafactory" {
   datafactory_contributor_group_id = module.data_engineer_user_group[0].group_id
   name_override                    = try(var.name_overrides.datafactory, null)
 
-  group_config = {
-    purpose = "datafactory"
-    owners  = var.datalakehouse_admins
-  }
+  group_config = local.default_data_factory_group_config
 
   alert_on_pipeline_failure     = var.alert_on_pipeline_failure
   pipeline_failure_alert_emails = var.alert_contact_emails
@@ -149,13 +137,18 @@ module "datawarehouse" {
   audit_storage_account_name_override = try(var.name_overrides.warehouse_audit_storage_account, null)
   monitor_alert_emails                = var.alert_contact_emails
   enable_db_monitor_alerts            = true
+  disabled_monitor_alerts = [
+    # This alert is extremely noisy in a Data Lakehouse, since the number of
+    # connections explode while pipelines are running in the data factory.
+    "anomalous_connection_rate"
+  ]
 
   datawarehouse_contributor_principal_ids = {
     "Data Engineer Group" = module.data_engineer_user_group[0].group_id
   }
 
   databases = {
-    "gogn" = {
+    (var.instance) = {
       sku_name       = var.warehouse_config.sku_name
       zone_redundant = var.warehouse_config.zone_redundant
       max_size_gb    = var.warehouse_config.max_size_gb

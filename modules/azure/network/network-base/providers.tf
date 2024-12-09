@@ -1,8 +1,5 @@
-# Module retroactively scaffolded
-# via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-27T13:25:03
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 
 terraform {
   required_version = ">= 1.1"

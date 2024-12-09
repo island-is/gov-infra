@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 resource "azurerm_management_lock" "this" {
   count      = var.lock == true ? 1 : 0
   name       = "lock-${module.defaults.resource_name}"

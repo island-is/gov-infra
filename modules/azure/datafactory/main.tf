@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T11:02:31
+# Author: Skyvafnir
 
 locals {
   resource_abbreviation = "adf"
@@ -148,6 +146,11 @@ resource "azurerm_monitor_metric_alert" "this" {
 
   action {
     action_group_id = module.pipeline_failure_action_group[0].action_group_id
+    webhook_properties = {
+      #       "Alert  reason"   = "Jams"
+      #       "Test Alert Rule" = "Jems"
+      #       "asdf"            = "asdfg"
+    }
   }
 
   tags = module.defaults.tags

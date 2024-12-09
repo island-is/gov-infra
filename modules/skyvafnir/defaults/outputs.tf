@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 output "tags" {
   description = "The tags to be used on the resource."
   value       = local.tags

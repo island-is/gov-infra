@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T11:02:35
+# Author: Skyvafnir
 
 variable "org_code" {
   description = "The organisation code for the environment"
@@ -88,6 +86,7 @@ variable "databases" {
   - max_size_gb: The maximum size of the MS SQL Database in GB.
                  Keep in mind that the maximum size of a database varies between SKUs.
                  See: https://learn.microsoft.com/en-us/azure/azure-sql/database/resource-limits-logical-server?view=azuresql-db
+  - min_capacity: The minimum capacity of the MS SQL Database in DTUs. This is only applicable Serverless dbs.
   - collation: The collation to use for the MS SQL Database.
   - zone_redundant: Whether the MS SQL Database should be zone redundant. Only available for Standard and Premium SKUs.
                     See: https://docs.microsoft.com/en-us/azure/azure-sql/database/high-availability-sla#zone-redundant-database
@@ -105,6 +104,9 @@ variable "databases" {
          collation      = "Icelandic_100_CI_AS"
          name_override  = null
          contributor_principal_ids = ["<principal-id1>", "<principal-id2>", [...] ]
+
+         # only applies to Serverless databases
+         min_capacity   = 0.5
      }
   ```
   DESC
@@ -112,6 +114,7 @@ variable "databases" {
     object({
       sku_name                  = string
       max_size_gb               = number
+      min_capacity              = optional(number, 0)
       collation                 = optional(string, "Icelandic_100_CI_AS")
       zone_redundant            = optional(bool, false)
       name_override             = optional(string, null)
@@ -164,7 +167,7 @@ variable "enable_db_monitor_alerts" {
   failed_connections_user_errors   = "Alerts on failed connections due to user errors, if they exceed a threshold."
   anomalous_connection_rate        = "Alerts on unusual rates of successful connections, indicating potential anomalies."
   DESC
-  default     = false
+  default     = true
 }
 
 variable "monitor_alert_emails" {

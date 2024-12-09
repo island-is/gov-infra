@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorrikristjansson
-# Version: 0.1.0
-# Timestamp: 2023-12-19T16:11:02
+# Author: Skyvafnir
 
 variable "org_code" {
   description = "Org code"
@@ -40,6 +38,12 @@ variable "sql_monitor_alert_emails" {
   description = "Emails to send SQL alerts to"
 }
 
+variable "connection_strings" {
+  type        = map(string)
+  description = "Connection strings for the app service"
+  default     = {}
+}
+
 variable "app_service_configuration" {
   type        = map(string)
   description = "Configuration for the app service"
@@ -72,8 +76,9 @@ variable "keyvault_admin_principal_ids" {
 variable "databases" {
   description = "Map of databases to create"
   type = map(object({
-    sku_name    = string
-    max_size_gb = number
+    sku_name      = string
+    max_size_gb   = number
+    name_override = optional(string)
   }))
 }
 
@@ -100,8 +105,53 @@ variable "sql_admin_group_owner_principal_ids" {
   description = "List of EntraID Principal ID's that will be granted owner access to the SQL Server."
 }
 
+variable "sql_admin_group_member_principal_ids" {
+  type        = list(string)
+  description = "List of EntraID Principal ID's that will be granted member access to the SQL Server."
+  default     = []
+}
+
+variable "service_contributor_principal_ids" {
+  type        = list(string)
+  description = "List of EntraID Principal ID's that will be granted contributor access to the Azure Services."
+}
+
 variable "db_server_audit_storage_account_name_override" {
   type        = string
   description = "Override the storage account name for the database server audit"
   default     = ""
+}
+
+variable "app_service_plan_name_override" {
+  type        = string
+  description = "Override the app service plan name"
+  default     = ""
+}
+
+variable "sql_logins" {
+  type        = list(string)
+  description = "List of SQL Logins to create on the SQL Server"
+  default     = []
+}
+
+variable "app_service_environment_enabled" {
+  description = "Enable the app service environment for the app service."
+  type        = bool
+  default     = false
+}
+
+variable "ip_restrictions" {
+  type = list(object({
+    action          = string
+    ip_address_cidr = string
+    priority        = number
+    name            = string
+  }))
+
+  description = "IP restrictions for the app service"
+
+  validation {
+    condition     = alltrue([for restriction in var.ip_restrictions : can(cidrnetmask(restriction.ip_address_cidr))])
+    error_message = "Each 'ip_address_cidr' must be a valid CIDR notation."
+  }
 }

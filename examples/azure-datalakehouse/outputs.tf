@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T10:53:38
+# Author: Skyvafnir
 
 output "datalakehouse_contributor_group_info" {
   description = "The Data Lakehouse Contributor group"
@@ -32,4 +30,9 @@ output "datafactory_info" {
 output "datalake_info" {
   description = "The Data Lake Info"
   value       = local.datalake_enabled ? module.datalake : null
+}
+
+output "data_engineer_user_group_id" {
+  description = "The Data Engineer User Group ID"
+  value       = module.data_engineer_user_group[0].group_id
 }

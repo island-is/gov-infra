@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 locals {
   role_assignment_scope = local.resource_group_info.id
 }

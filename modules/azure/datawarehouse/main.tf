@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T11:02:35
+# Author: Skyvafnir
 
 data "azurerm_client_config" "current" {}
 
@@ -54,6 +52,7 @@ module "database" {
 
   name_override = each.value.name_override
   max_size_gb   = each.value.max_size_gb
+  min_capacity  = each.value.min_capacity
   collation     = each.value.collation
   sku_name      = each.value.sku_name
 
@@ -61,49 +60,32 @@ module "database" {
 
   contributor_principal_ids = local.per_database_contributor_principal_ids[each.key]
 
-
   tags = local.tags
 }
 
-module "naming_datawarehouse_audit_sa" {
-  source  = "Azure/naming/azurerm"
-  version = "0.2.0"
+module "audit_store" {
+  source = "../storage-account"
 
-  prefix = [var.org_code]
-  suffix = concat(module.defaults.suffix, ["audit"])
-}
+  org_code = var.org_code
+  tier     = var.tier
+  instance = "${var.instance}audit"
 
-resource "azurerm_storage_account" "audit" {
-  name                            = var.audit_storage_account_name_override != null ? var.audit_storage_account_name_override : module.naming_datawarehouse_audit_sa.storage_account.name_unique
-  location                        = var.resource_group_info.location
-  account_replication_type        = "LRS"
-  account_tier                    = "Standard"
-  min_tls_version                 = "TLS1_2"
-  resource_group_name             = var.resource_group_info.name
-  public_network_access_enabled   = false
-  allow_nested_items_to_be_public = false
+  resource_group_info = var.resource_group_info
 
-  identity {
+  identity = {
     type = "SystemAssigned"
   }
 
-  blob_properties {
-    delete_retention_policy {
-      days = 7
-    }
-  }
+  account_soft_delete_retention_days = 7
+  public_network_access_enabled      = false
 
-  lifecycle {
-    # TF always wants to change this parameter since we're using
-    # azurerm_storage_account_customer_managed_key
-    ignore_changes = [customer_managed_key]
-  }
+  storage_account_name_override = var.audit_storage_account_name_override
 
   tags = local.tags
 }
 
 resource "azurerm_storage_account_customer_managed_key" "audit" {
-  storage_account_id = azurerm_storage_account.audit.id
+  storage_account_id = module.audit_store.storage_account_id
   key_vault_id       = var.key_vault_id
   key_name           = azurerm_key_vault_key.audit.name
 
@@ -120,9 +102,9 @@ resource "azurerm_key_vault_key" "audit" {
 }
 
 resource "azurerm_mssql_server_extended_auditing_policy" "this" {
+
   server_id                               = azurerm_mssql_server.this.id
-  storage_endpoint                        = azurerm_storage_account.audit.secondary_blob_endpoint
-  storage_account_access_key              = azurerm_storage_account.audit.secondary_access_key
+  storage_endpoint                        = module.audit_store.primary_blob_endpoint
   storage_account_access_key_is_secondary = false
   retention_in_days                       = 90
 
@@ -133,7 +115,7 @@ resource "azurerm_mssql_server_extended_auditing_policy" "this" {
 }
 
 resource "azurerm_role_assignment" "audit_contributor" {
-  scope                = azurerm_storage_account.audit.id
+  scope                = module.audit_store.storage_account_id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_mssql_server.this.identity[0].principal_id
 }
@@ -141,17 +123,14 @@ resource "azurerm_role_assignment" "audit_contributor" {
 resource "azurerm_key_vault_access_policy" "storage" {
   key_vault_id = var.key_vault_id
   tenant_id    = local.tenant_id
-  object_id    = azurerm_storage_account.audit.identity[0].principal_id
+  object_id    = module.audit_store.identity[0].principal_id
+
+  secret_permissions = ["Get"]
 
   key_permissions = [
     "Get", "Create", "List", "Restore", "Recover", "UnwrapKey", "WrapKey", "Purge", "Encrypt", "Decrypt", "Sign",
     "Verify"
   ]
-  secret_permissions = ["Get"]
-
-  lifecycle {
-    prevent_destroy = true
-  }
 
   depends_on = [
     var.key_vault_id
@@ -163,16 +142,17 @@ resource "azurerm_key_vault_access_policy" "db" {
   tenant_id    = local.tenant_id
   object_id    = azurerm_mssql_server.this.identity[0].principal_id
 
+  secret_permissions = ["Get"]
+
   key_permissions = [
     "Get", "Create", "List", "Restore", "Recover", "UnwrapKey", "WrapKey", "Purge", "Encrypt", "Decrypt", "Sign",
     "Verify", "Backup", "Delete", "GetRotationPolicy"
   ]
 
-  secret_permissions = ["Get"]
-
   lifecycle {
     prevent_destroy = true
   }
+
   depends_on = [
     var.key_vault_id
   ]

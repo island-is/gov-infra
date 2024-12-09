@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 output "azure_resource_group_location" {
   description = "The azure_resource_group_location"
   value       = azurerm_virtual_network.this.location

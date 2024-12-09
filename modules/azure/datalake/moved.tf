@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 moved {
   from = module.file_share_role_assignment
   to   = module.fileshare_role_assignment[0]

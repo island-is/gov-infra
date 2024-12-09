@@ -1,5 +1,8 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 locals {
-  resource_abbreviation  = "rg"
+  resource_abbreviation = "rg"
+  tags                  = merge(module.defaults.tags, var.tags)
 }
 
 resource "time_offset" "now" {
@@ -20,10 +23,10 @@ locals {
 
 resource "azurerm_resource_group" "this" {
   count    = local.provision_resource_group ? 1 : 0
-  name     = module.defaults.resource_name
+  name     = var.resource_group_name_override == null ? module.defaults.resource_name : var.resource_group_name_override
   location = var.location
 
-  tags = module.defaults.tags
+  tags = local.tags
 }
 
 module "cost_alarm_action_group" {
@@ -41,8 +44,10 @@ module "cost_alarm_action_group" {
   short_name      = "cost"
   email_receivers = var.budget_contact_emails
 
-  tags = module.defaults.tags
+  tags = local.tags
 }
+
+
 
 resource "azurerm_consumption_budget_resource_group" "this" {
   count = local.provision_resource_group && var.budget_for_resource_group > 0.0 ? 1 : 0

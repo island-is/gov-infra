@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: gzur
-# Version: 0.1.0
-# Timestamp: 2023-08-09T13:38:32
+# Author: Skyvafnir
 
 terraform {
   required_version = ">= 1.1"

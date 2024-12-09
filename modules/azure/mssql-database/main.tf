@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: gzur
-# Version: 0.1.0
-# Timestamp: 2023-12-14T13:28:23
+# Author: Skyvafnir
 
 locals {
   resource_abbreviation = "db"
@@ -14,6 +12,7 @@ resource "azurerm_mssql_database" "this" {
   collation            = var.collation
   sku_name             = var.sku_name
   max_size_gb          = var.max_size_gb
+  min_capacity         = var.min_capacity
   zone_redundant       = var.zone_redundant
   storage_account_type = var.zone_redundant ? "Geo" : "Local"
   tags                 = local.tags
