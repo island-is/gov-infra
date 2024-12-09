@@ -147,9 +147,7 @@ resource "azurerm_monitor_metric_alert" "this" {
   action {
     action_group_id = module.pipeline_failure_action_group[0].action_group_id
     webhook_properties = {
-      #       "Alert  reason"   = "Jams"
-      #       "Test Alert Rule" = "Jems"
-      #       "asdf"            = "asdfg"
+      # This is a placeholder for future webhook integration.
     }
   }
 
