@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorrikristjansson
-# Version: 0.1.0
-# Timestamp: 2024-01-14T16:44:10
+# Author: Skyvafnir
 
 module "base_setup" {
   source = "../../modules/azure/base-setup"
@@ -12,6 +10,8 @@ module "base_setup" {
 
   budget_contact_emails     = var.budget_contact_emails
   budget_for_resource_group = 50
+
+  tags = var.tags
 }
 
 module "databricks_workspace" {
@@ -26,7 +26,8 @@ module "databricks_workspace" {
     location = module.base_setup.resource_group_location
   }
 
-  sku = var.databricks_sku_name
+  sku  = var.databricks_sku_name
+  tags = var.tags
 }
 
 module "databricks_config" {

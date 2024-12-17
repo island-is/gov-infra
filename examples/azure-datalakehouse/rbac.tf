@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 data "azuread_user" "datalakehouse_contributors" {
   # A collection of AD Users that are allowed to access the Data Lakehouse.
   count               = length(var.datalakehouse_contributors)
@@ -94,9 +96,10 @@ Provisioned by terraform via azure-datalakehouse
 DESC
 }
 
+
 locals {
-  # This is a list of role assignments that should be applied to the Data Engineers
-  data_engineer_role_assignments = concat([
+  # This is a list of role assignments that should be applied to the Data Lakehouse
+  data_lakehouse_role_assignments = concat([
     {
       purpose              = "Can view resources"
       role_definition_name = "Reader"
@@ -119,10 +122,18 @@ locals {
       }
     ] : [] # Empty list if data factory is not enabled
   )
+  adf_contributor_assignments = local.data_factory_enabled && var.adf_contributors != null ? [
+    for c in var.adf_contributors : {
+      purpose              = c.purpose
+      role_definition_name = "Data Factory Contributor"
+      principal_id         = c.principal_id
+      scope                = module.datafactory[0].id
+    }
+  ] : []
 }
 
-module "data_engineer_group_role_assignments" {
-  for_each = { for r in local.data_engineer_role_assignments : r.purpose => r }
+module "data_lakehouse_role_assignments" {
+  for_each = { for r in concat(local.data_lakehouse_role_assignments, local.adf_contributor_assignments) : r.purpose => r }
 
   source = "../../modules/azure/role-assignment"
 

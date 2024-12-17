@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T10:55:59
+# Author: Skyvafnir
 
 variable "org_code" {
   description = "The organisation code for the environment"

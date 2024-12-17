@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 output "resource_group_name" {
   description = "The Resource Group name"
   value       = local.resource_group_info.name

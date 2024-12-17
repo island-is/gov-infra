@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T10:53:38
+# Author: Skyvafnir
 
 variable "org_code" {
   description = "Organization code"
@@ -57,19 +55,6 @@ variable "features" {
     "datalake"       = true
     "keyvault"       = true
   }
-}
-
-variable "platform_config" {
-  type = object({
-    workload_subscription_id       = string
-    platform_subscription_id       = string
-    workload_management_group_name = optional(string, "")
-  })
-  description = <<DESC
-  `workload_subscription_id` - The ID of the subscription which we want to provision into.
-  `platform_subscription_id` - The ID of the platform subscription.
-  `workload_management_group_name (optional)` - The name of the management group which we want to provision our workload subscription into. If this is not set, the placement of the workload subscription inside the management group hieracry will not be changed.
-  DESC
 }
 
 variable "warehouse_config" {
@@ -195,8 +180,24 @@ variable "alert_on_pipeline_failure" {
   description = "Whether to alert on pipeline failure"
   default     = false
 }
+
 variable "alert_contact_emails" {
   type        = list(string)
   description = "A list of emails to send alerts to on pipeline failure"
   default     = []
+}
+
+variable "create_adf_group" {
+  type        = bool
+  description = "Whether to create a group for the Data Factory."
+  default     = true
+}
+
+variable "adf_contributors" {
+  description = "A list of AD Object ID's that are allowed to contribute to the Data Factory"
+  type = list(object({
+    purpose      = string
+    principal_id = string
+  }))
+  default = null
 }

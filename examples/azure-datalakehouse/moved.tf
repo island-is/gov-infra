@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 moved {
   from = data.azuread_user.warehouse_admins
   to   = data.azuread_user.datalakehouse_contributors
@@ -84,5 +86,9 @@ moved {
 moved {
   from = module.logic_app_mgmt_role
   to   = module.data_engineer_role
+}
 
+moved {
+  from = module.data_engineer_group_role_assignments
+  to   = module.data_lakehouse_role_assignments
 }

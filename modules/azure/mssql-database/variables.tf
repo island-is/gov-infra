@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: gzur
-# Version: 0.1.0
-# Timestamp: 2023-12-14T13:28:23
+# Author: Skyvafnir
 
 variable "org_code" {
   description = "Org code"
@@ -35,6 +33,15 @@ variable "max_size_gb" {
   The maximum size of the MS SQL Database in GB.
   Keep in mind that the maximum size of a database varies between SKUs.
   See: https://learn.microsoft.com/en-us/azure/azure-sql/database/resource-limits-logical-server?view=azuresql-db
+  DESC
+}
+
+variable "min_capacity" {
+  default     = null
+  type        = number
+  description = <<DESC
+  The minimum capacity of the MS SQL Database in DTUs. This is only applicable Serverless dbs.
+  See: https://docs.microsoft.com/en-us/azure/azure-sql/database/service-tiers-dtu
   DESC
 }
 

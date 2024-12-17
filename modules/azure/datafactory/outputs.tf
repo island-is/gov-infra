@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T11:02:31
+# Author: Skyvafnir
 
 output "service_principal_object_id" {
   description = "The Service Principal / Object ID that the Data Factory runs as."

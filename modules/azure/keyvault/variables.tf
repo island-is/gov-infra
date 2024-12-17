@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 variable "tier" {
   description = "Tier identifier (e.g. dev, test, prod)"
   type        = string
@@ -51,6 +53,12 @@ variable "keyvault_admin_principal_id" {
 
 variable "keyvault_admin_principal_ids" {
   description = "List of Object IDs of the users or service principals that should be granted Key Vault Administrator permissions"
+  type        = list(string)
+  default     = []
+}
+
+variable "keyvault_contributor_principal_ids" {
+  description = "List of Object IDs of the users or service principals that should be granted Key Vault Contributor permissions"
   type        = list(string)
   default     = []
 }

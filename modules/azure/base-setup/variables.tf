@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 variable "org_code" {
   type        = string
   description = "Name of the organization"
@@ -44,6 +46,7 @@ variable "budget_for_resource_group" {
   type        = number
   description = <<DESC
   Budget for the whole resource group. The currency is determined by the subscription's billing currency.
+  If set to 0, no budget will be created.
   DESC
   default     = 0
 }
@@ -71,4 +74,10 @@ variable "role_assignments" {
 
     error_message = "Either role_definition_id or role_name must be set for each role assignment."
   }
+}
+
+variable "resource_group_name_override" {
+  type        = string
+  description = "Override the name of the resource group"
+  default     = null
 }

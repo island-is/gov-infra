@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 ## Monitor alerts
 
 module "action_group" {
@@ -129,6 +131,7 @@ module "db_alerts" {
   window_size          = try(each.value.window_size, null)
   frequency            = try(each.value.frequency, null)
 
+
   action = {
     action_group_id    = module.action_group[0].action_group_id
     webhook_properties = {}
@@ -136,5 +139,5 @@ module "db_alerts" {
 
   criteria = [merge(each.value, { metric_namespace = "Microsoft.Sql/servers/databases" })]
 
-  tags = module.defaults.tags
+  tags = local.tags
 }

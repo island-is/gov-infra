@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: gzur
-# Version: 0.1.0
-# Timestamp: 2023-05-08T14:00:15
+# Author: Skyvafnir
 
 locals {
   # Change this to match your resource.
@@ -22,7 +20,7 @@ locals {
 
   provision_group = var.existing_group_name == "" ? true : false
   group_info = {
-    group_id   = local.provision_group ? azuread_group.this[0].id : data.azuread_group.this[0].id
+    group_id   = local.provision_group ? azuread_group.this[0].object_id : data.azuread_group.this[0].object_id
     group_name = local.provision_group ? azuread_group.this[0].display_name : data.azuread_group.this[0].display_name
   }
 }

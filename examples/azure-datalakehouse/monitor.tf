@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 
 # TODO: All of this needs to move to a module
 module "defaults" {

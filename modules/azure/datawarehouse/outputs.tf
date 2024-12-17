@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T11:02:35
+# Author: Skyvafnir
 
 output "sql_server_id" {
   description = "The id of the datawarehouse"
@@ -39,6 +37,6 @@ output "db_info" {
 }
 
 output "enabled_alerts" {
-    description = "List of enabled alerts"
-    value       = keys(local.enabled_alerts)
+  description = "List of enabled alerts"
+  value       = keys(local.enabled_alerts)
 }

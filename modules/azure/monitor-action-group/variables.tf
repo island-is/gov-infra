@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: gzur
-# Version: 0.1.0
-# Timestamp: 2024-02-14T13:40:35
+# Author: Skyvafnir
 
 variable "org_code" {
   description = "Org code"
@@ -51,6 +49,7 @@ variable "short_name" {
   validation {
     condition     = length(var.short_name) <= 9
     error_message = "Short name must not exceed 9 characters."
+
   }
 }
 

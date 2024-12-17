@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 data "azurerm_client_config" "current" {}
 
 locals {
@@ -147,6 +149,17 @@ resource "azurerm_key_vault_access_policy" "contributor" {
     # otherwise we risk losing the ability to delete the Key Vault.
     azurerm_key_vault.this
   ]
+}
+
+locals {
+  contributor_principal_ids_map = { for idx, id in var.keyvault_contributor_principal_ids : idx => id }
+}
+
+resource "azurerm_role_assignment" "this" {
+  for_each             = local.contributor_principal_ids_map
+  scope                = azurerm_key_vault.this.id
+  role_definition_name = "Contributor"
+  principal_id         = each.value
 }
 
 resource "azurerm_role_assignment" "kv_admin" {

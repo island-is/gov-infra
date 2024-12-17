@@ -1,3 +1,5 @@
+# Module scaffolded via skyvafnir-module-template by
+# Author: Skyvafnir
 moved {
   from = azurerm_data_factory_managed_private_endpoint.example
   to   = azurerm_data_factory_managed_private_endpoint.this

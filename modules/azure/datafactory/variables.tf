@@ -1,7 +1,5 @@
 # Module scaffolded via skyvafnir-module-template by
-# Author: jonorri
-# Version: 0.1.0
-# Timestamp: 2023-04-29T11:02:31
+# Author: Skyvafnir
 
 variable "org_code" {
   type        = string
@@ -125,8 +123,11 @@ variable "group_config" {
   default     = null
 
   validation {
-    # Ensure that purpose is not the empty string
-    condition     = var.group_config == null || var.group_config.purpose != ""
+    condition = (
+      # Ensure that group_config is either null, or if provided, its purpose attribute is not an empty string
+      var.group_config == null ||
+      (var.group_config != null ? var.group_config.purpose != "" : true)
+    )
     error_message = "`var.group_config.purpose` must not be the empty string"
   }
 }
